@@ -25,7 +25,11 @@ fun App() {
 }
 
 fun main() = application {
+    val racers = RacerFactory.createRacers("src\\jvmMain\\kotlin\\data\\Racers.csv")
+    val receiver = DataReceiver()
+    receiver.start()
     Window(onCloseRequest = ::exitApplication) {
         App()
     }
+    receiver.stop()
 }
