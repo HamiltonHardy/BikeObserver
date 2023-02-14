@@ -30,8 +30,7 @@ data class RacerStatus(
 
     companion object {
         fun decode(bytes: ByteArray): RacerStatus {
-            print(bytes[0])
-            val re = Regex("[^A-Za-z0-9{}:,\"\"]")
+            val re = Regex("[^A-Za-z0-9{}:,\"]")
 
             var inputString = bytes.toString(Charsets.UTF_8)
             inputString = re.replace(inputString, "")
