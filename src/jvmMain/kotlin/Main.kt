@@ -102,6 +102,10 @@ fun main() = application {
         App(applicationState.window1)
     val observer = CheatingComputer()
     AppScreenState.racers.values.forEach { it.addObserver(observer) }
+//    AppScreenState.racers[0]?.addObserver(observer)
+//    AppScreenState.racers[1]?.addObserver(observer)
+//    AppScreenState.racers[2]?.addObserver(observer)
+//    AppScreenState.racers[3]?.addObserver(observer)
     MyWindow(observer,receiver)
 
 

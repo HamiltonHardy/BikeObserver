@@ -15,7 +15,7 @@ class Racer(firstN: String, lastN: String, bib: Int, raceG: Int,startTime: Int){
 
     fun updateStatus(racerStatus: RacerStatus) {
         lastSensorPassed = racerStatus.SensorId
-        lastTimestamp = racerStatus.Timestamp - startTime
+        lastTimestamp = racerStatus.Timestamp
         notifyObservers()
     }
     fun addObserver(observer: RacerObserver) {

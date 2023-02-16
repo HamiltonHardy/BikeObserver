@@ -29,7 +29,7 @@ data class RacerStatus(
 
             var inputString = bytes.toString(Charsets.UTF_8)
             inputString = re.replace(inputString, "")
-            println("Received input: $inputString")
+//            println("Received input: $inputString")
             try {
                 //val mstream = ByteArrayInputStream(bytes)
                 val str = bytes.toString(Charsets.UTF_8)
