@@ -6,14 +6,12 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 
@@ -46,26 +44,28 @@ private fun App(state: MyWindowState) = Window(onCloseRequest = state::close, ti
                                 state.selectedRacer = state.getRacer(index)
                             }
                     ) {
-                        Column { state.getRacer(index)?.let { Text(it.getFullName()) } }
+                        Column { state.getRacer(index).let { Text(it.getFullName()) } }
                         Column {
-                            Text(state.getRacer(index)?.bibNumber.toString(), modifier = Modifier.align(Alignment.End))
+                            Text(state.getRacer(index).bibNumber.toString(), modifier = Modifier.align(Alignment.End))
                         }
                     }
                 }
             }
             Column(modifier = Modifier.fillMaxWidth(.1f)) {
-                Card(elevation = 5.dp, modifier = Modifier.fillMaxWidth()) {
-                    Button(onClick = {
-                        state.selectedObserver?.let {
-                            state.selectedRacer?.let { it1 ->
-                                state._setRacerObserver(
-                                    it1,
-                                    it
-                                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Card(elevation = 5.dp, modifier = Modifier.fillMaxWidth()) {
+                        Button(onClick = {
+                            state.selectedObserver?.let {
+                                state.selectedRacer?.let { it1 ->
+                                    state._setRacerObserver(
+                                        it1,
+                                        it
+                                    )
+                                }
                             }
+                        }) {
+                            Text("Set")
                         }
-                    }) {
-                        Text("Set")
                     }
                 }
             }
@@ -98,8 +98,11 @@ fun main() = application {
     val receiver = DataReceiver()
 //
 
+
         App(applicationState.window1)
-    MyWindow(applicationState.window2,receiver)
+    val observer = CheatingComputer()
+    AppScreenState.racers.values.forEach { it.addObserver(observer) }
+    MyWindow(observer,receiver)
 
 
 
@@ -118,13 +121,20 @@ fun main() = application {
 
 
 @Composable
-private fun MyWindow(
-    state: MyWindowState
-,receiver: DataReceiver) = Window(onCloseRequest = {receiver.stop()
-    state::close}, title = state.title) {
+fun MyWindow(
+    observer: RacerObserver,
+receiver: DataReceiver) = Window(onCloseRequest = {receiver.stop() }, title = observer.name) {
     receiver.start()
-    receiver.StatusMessages()
+    val observer = remember { observer }
 
+    LazyColumn {
+        item{
+            Text("Status Messages:")
+        }
+            items(observer.observedMessage.size) { index ->
+                Text(observer.observedMessage[index])
+            }
+    }
 }
 
 private class MyApplicationState {

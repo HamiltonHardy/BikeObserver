@@ -14,11 +14,6 @@ class DataReceiver {
     private lateinit var datagramSocket: DatagramSocket
     private var keepGoing: Boolean = true
     private lateinit var runThread: Thread
-    private var _latestStatusMessage by mutableStateOf("")
-    private var _statusMessages by mutableStateOf(listOf<String>())
-    val statusMessages: List<String> get() = _statusMessages
-
-    val latestStatusMessage: String get() = _latestStatusMessage
 
     fun start() {
         datagramSocket = DatagramSocket(14000)
@@ -40,16 +35,10 @@ class DataReceiver {
                 datagramSocket.receive(packet)
                 if (packet.length > 0) {
                     val statusMessage = decode(packet.data)
-                    if (statusMessage != null) {
-                        val message = "Race Bib #=${statusMessage.RacerBibNumber}, Sensor=${statusMessage.SensorId}, Time=${statusMessage.Timestamp}"
-                        val racer: Racer? = AppScreenState.lookupRacer(statusMessage.RacerBibNumber)
-                        racer?.let {
-                            it.updateStatus(statusMessage)
-                        }
+                    val message = "Race Bib #=${statusMessage.RacerBibNumber}, Sensor=${statusMessage.SensorId}, Time=${statusMessage.Timestamp}"
+                    val racer: Racer? = AppScreenState.lookupRacer(statusMessage.RacerBibNumber)
+                    racer?.updateStatus(statusMessage)
 //                        lookup racer
-                        _latestStatusMessage = message
-                        _statusMessages = _statusMessages + message
-                    }
                 }
             } catch (err: Exception) {
                 if (err !is java.net.SocketTimeoutException) {
@@ -58,21 +47,5 @@ class DataReceiver {
             }
         }
     }
-
-@Composable
-fun StatusMessages() {
-    LazyColumn {
-        item{
-            Text("Status Messages:")
-        }
-        items(_statusMessages.size) { index ->
-            Text(_statusMessages[index])
-        }
-//
-//        _statusMessages.forEach {
-//            Text(it)
-//        }
-    }
-}
 
 }
