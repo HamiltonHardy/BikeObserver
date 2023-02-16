@@ -1,6 +1,7 @@
 import androidx.compose.material.MaterialTheme
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
@@ -20,8 +21,9 @@ import androidx.compose.ui.window.*
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 @Preview
-private fun App(applicationState: MyApplicationState,racers : List<Racer>) {
-
+private fun App(state: MyWindowState) = Window(onCloseRequest = state::close, title = "Main") {
+    var viewModel: AppViewModel by remember { mutableStateOf(AppViewModel()) }
+    var state = viewModel.state
     MaterialTheme {
         Row {
             LazyColumn(modifier = Modifier.fillMaxWidth(.475f)) {
@@ -35,60 +37,81 @@ private fun App(applicationState: MyApplicationState,racers : List<Racer>) {
                         Column { Text("Bib", modifier = Modifier.align(Alignment.End)) }
                     }
                 }
-                items(racers.size) { index ->
+                items(state.getRacers().size) { index ->
                     Card(
                         elevation = 5.dp,
                         modifier = Modifier.fillMaxWidth()
                             .padding(top = 1.dp, bottom = 1.dp, start = 10.dp, end = 10.dp)
+                            .clickable {
+                                state.selectedRacer = state.getRacer(index)
+                            }
                     ) {
-                        Column { Text(racers[index].getFullName()) }
+                        Column { state.getRacer(index)?.let { Text(it.getFullName()) } }
                         Column {
-                            Text(racers[index].bibNumber.toString(), modifier = Modifier.align(Alignment.End))
+                            Text(state.getRacer(index)?.bibNumber.toString(), modifier = Modifier.align(Alignment.End))
                         }
                     }
                 }
             }
-                Column(modifier = Modifier.fillMaxWidth(.1f)) {
-                    Card(elevation = 5.dp, modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxWidth(.1f)) {
+                Card(elevation = 5.dp, modifier = Modifier.fillMaxWidth()) {
+                    Button(onClick = {
+                        state.selectedObserver?.let {
+                            state.selectedRacer?.let { it1 ->
+                                state._setRacerObserver(
+                                    it1,
+                                    it
+                                )
+                            }
+                        }
+                    }) {
+                        Text("Set")
                     }
                 }
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Card(elevation = 5.dp,
-                        modifier = Modifier.fillMaxSize()
-                            .padding(top = 10.dp, bottom = 10.dp, start = 3.dp, end = 10.dp)
-                    ) {
-                        Text(text="hello")
-
-                        Button(onClick = { applicationState.openNewWindow()}
-
-                         ) {
-                            Text("Click me")
+            }
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier.fillMaxWidth().fillMaxHeight(.5f)) {
+                    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                        items(state.observers.size) { index ->
+                            Card(
+                                elevation = 5.dp,
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(top = 10.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
+                                    .clickable { state.selectedObserver = state.observers[index] }
+                            ) {
+                                Column { Text(state.observers[index].name) }
+                            }
                         }
                     }
+                }
+                Row{
+                    Card { Text(text="hello") }
                 }
             }
         }
     }
+}
 
 fun main() = application {
     val applicationState = remember { MyApplicationState() }
-    val racers = RacerFactory.createRacers("src\\jvmMain\\kotlin\\data\\Racers.csv")
+
     val receiver = DataReceiver()
 //
 
-        Window(onCloseRequest = {
-            ::exitApplication}, title = "Main") {
-        App(applicationState,racers)
-    }
+        App(applicationState.window1)
+    MyWindow(applicationState.window2,receiver)
+
+
+
 //    Window(onCloseRequest = ::exitApplication, title = "two") {
 //    }
 //    MyWindow()
-
-    for (window in applicationState.windows) {
-        key(window) {
-            MyWindow(window,receiver)
-        }
-    }
+//
+//    for (window in applicationState.getWindows()) {
+//        key(window) {
+//            MyWindow(window,receiver)
+//        }
+//    }
 
 
 }
@@ -105,31 +128,43 @@ private fun MyWindow(
 }
 
 private class MyApplicationState {
-    val windows = mutableStateListOf<MyWindowState>()
+    var window1 = MyWindowState("Window 1", onOpen = {openWindow2()})
+    var window2 = MyWindowState("Window 2")
 
-    fun openNewWindow() {
-        windows += MyWindowState("Window ${windows.size}")
+    fun getWindows(): List<MyWindowState> {
+        return listOf(window1, window2)
     }
 
     fun exit() {
-        windows.clear()
+        window1.close()
+        window2.close()
     }
 
-    private fun MyWindowState(
-        title: String
-    ) = MyWindowState(
-        title,
-        openNewWindow = ::openNewWindow,
-        exit = ::exit,
-        windows::remove
-    )
+    private fun openWindow2() {
+        window2 = MyWindowState("Window 2")
+        window2.open()
+    }
+
+//    private fun MyWindowState(
+//        title: String
+//    ) = MyWindowState(
+//        title,
+//        openNewWindow = ::openNewWindow,
+//        exit = ::exit,
+//        windows::remove
+//    )
 }
 
 private class MyWindowState(
     val title: String,
-    val openNewWindow: () -> Unit,
-    val exit: () -> Unit,
-    private val close: (MyWindowState) -> Unit
+    val onOpen: () -> Unit = {},
+    val onClose: () -> Unit = {},
+
 ) {
-    fun close() = close(this)
+    fun open() {
+        onOpen()
+    }
+    fun close(){
+        onClose()
+    }
 }

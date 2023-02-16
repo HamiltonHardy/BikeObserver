@@ -23,11 +23,6 @@ data class RacerStatus(
     var Timestamp: Int
 ) {
 
-
-    fun encode(): ByteArray {
-        return Json.encodeToString(serializer(), this).toByteArray()
-    }
-
     companion object {
         fun decode(bytes: ByteArray): RacerStatus {
             val re = Regex("[^A-Za-z0-9{}:,\"]")
@@ -40,15 +35,11 @@ data class RacerStatus(
                 val str = bytes.toString(Charsets.UTF_8)
                 val re = Regex("[^A-Za-z0-9{}:,\"\"]")
                 return Json.decodeFromString<RacerStatus>(re.replace(str,""))
-//                val json = Json.decodeFromStream<String>(mstream)
-//                print(json)
-//                return RacerStatus(0,0,0)
             } catch (e: SerializationException) {
                 println("Error decoding message: $e")
                 return RacerStatus(0,0,0)
             }
 
-//            return Json.decodeFromString(serializer(), mstream.readBytes().toString())
         }
     }
 }

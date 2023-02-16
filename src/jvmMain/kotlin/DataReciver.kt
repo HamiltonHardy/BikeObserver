@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import Racer
 
 class DataReceiver {
     private lateinit var datagramSocket: DatagramSocket
@@ -41,6 +42,11 @@ class DataReceiver {
                     val statusMessage = decode(packet.data)
                     if (statusMessage != null) {
                         val message = "Race Bib #=${statusMessage.RacerBibNumber}, Sensor=${statusMessage.SensorId}, Time=${statusMessage.Timestamp}"
+                        val racer: Racer? = AppScreenState.lookupRacer(statusMessage.RacerBibNumber)
+                        racer?.let {
+                            it.updateStatus(statusMessage)
+                        }
+//                        lookup racer
                         _latestStatusMessage = message
                         _statusMessages = _statusMessages + message
                     }
