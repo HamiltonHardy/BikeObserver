@@ -16,6 +16,7 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
+
 kotlin {
     jvm {
         jvmToolchain(11)
@@ -30,6 +31,7 @@ kotlin {
         }
         val jvmTest by getting{
             dependencies {
+                implementation("junit:junit:4.13.2")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
                 implementation(compose.desktop.currentOs)
             }
