@@ -1,14 +1,6 @@
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import RacerStatus.Companion.decode
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import Racer
 
 class DataReceiver {
     private lateinit var datagramSocket: DatagramSocket
@@ -35,8 +27,8 @@ class DataReceiver {
                 datagramSocket.receive(packet)
                 if (packet.length > 0) {
                     val statusMessage = decode(packet.data)
-                    val message = "Race Bib #=${statusMessage.RacerBibNumber}, Sensor=${statusMessage.SensorId}, Time=${statusMessage.Timestamp}"
-                    val racer: Racer? = AppScreenState.lookupRacer(statusMessage.RacerBibNumber)
+                    val message = "Race Bib #=${statusMessage.racerBibNumber}, Sensor=${statusMessage.sensorId}, Time=${statusMessage.timestamp}"
+                    val racer: Racer? = AppScreenState.lookupRacer(statusMessage.racerBibNumber)
                     racer?.updateStatus(statusMessage)
 //                        lookup racer
                 }

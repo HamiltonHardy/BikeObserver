@@ -1,6 +1,5 @@
 import java.io.BufferedReader
 import java.io.FileReader
-import java.util.Dictionary
 
 //Subject
 class Racer(firstN: String, lastN: String, bib: Int, raceG: Int,startTime: Int){
@@ -14,8 +13,8 @@ class Racer(firstN: String, lastN: String, bib: Int, raceG: Int,startTime: Int){
     var lastTimestamp: Int = 0
 
     fun updateStatus(racerStatus: RacerStatus) {
-        lastSensorPassed = racerStatus.SensorId
-        lastTimestamp = racerStatus.Timestamp
+        lastSensorPassed = racerStatus.sensorId
+        lastTimestamp = racerStatus.timestamp
         notifyObservers()
     }
     fun addObserver(observer: RacerObserver) {

@@ -25,13 +25,15 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
-//                implementation("androidx.compose.runtime:runtime-livedata:1.3.2")
-//                implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
-//                implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
                 implementation(compose.desktop.currentOs)
             }
         }
-        val jvmTest by getting
+        val jvmTest by getting{
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
+                implementation(compose.desktop.currentOs)
+            }
+        }
     }
 }
 
