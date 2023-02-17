@@ -15,6 +15,7 @@ abstract class RacerObserver {
 class CheatingComputer : RacerObserver() {
 //    time based fifo queue that detects if the racer is cheating
     val potentialCheaters : MutableList<Racer> = mutableListOf()
+    val cheaters : MutableList<Racer> = mutableListOf()
     var queue : LinkedList<Racer> = LinkedList()
 
     override val name: String
@@ -33,13 +34,33 @@ class CheatingComputer : RacerObserver() {
         }
     }
     private fun detectCheating(racer: Racer){
-        queue.forEach{
-            if(racer.raceGroup != it.raceGroup){
-                potentialCheaters += racer
-                observedMessage += ("Racer ${racer.getFullName()} is suspected of cheating")
+        if (cheaters.contains(racer)) return
+        synchronized(queue) {
+            val iterator = queue.iterator()
+            while (iterator.hasNext()) {
+                val it = iterator.next()
+                if (racer.raceGroup != it.raceGroup && racer.lastSensorPassed == it.lastSensorPassed) {
+                    if (potentialCheaters.contains(racer) || potentialCheaters.contains(it)) {
+                        if (potentialCheaters.contains(racer)) {
+                            cheaters += racer
+                            potentialCheaters.remove(racer)
+                            observedMessage += ("Racer ${racer.getFullName()} is cheating")
+                        }
+                        if (potentialCheaters.contains(it)) {
+                            cheaters += it
+                            potentialCheaters.remove(it)
+                            observedMessage += ("Racer ${it.getFullName()} is cheating")
+                        }
+                    } else{
+                        potentialCheaters += racer
+                        potentialCheaters += it
+                        observedMessage += ("Racer ${racer.getFullName()} is suspected of cheating")
+                    }
+                }
             }
         }
-        print(potentialCheaters)
+        println(potentialCheaters.size)
+        println(cheaters.size)
     }
     override fun update(racer: Racer) {
         observedMessage += ("Racer ${racer.getFullName()} has passed sensor ${racer.lastSensorPassed} at time ${racer.lastTimestamp}")
