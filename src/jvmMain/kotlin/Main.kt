@@ -36,22 +36,38 @@ private fun App(viewModel: AppViewModel) {
                         Column { Text("Bib", modifier = Modifier.align(Alignment.End)) }
                     }
                 }
-
-                    items(state.getObserverRacers(state.selectedObserver).size) { index ->
-                        Card(
-                            elevation = 5.dp,
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(top = 3.dp, bottom = 3.dp, start = 10.dp, end = 10.dp)
-                                .clickable {
-                                    state.selectedRacer = state.getRacer(index)
+                    state.observerRacers.forEach {
+                        item {
+                            Card(
+                                elevation = 5.dp,
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(top = 3.dp, bottom = 3.dp, start = 10.dp, end = 10.dp)
+                                    .clickable {
+                                        state.selectedRacer = it
+                                    }
+                            ) {
+                                Column {  Text(it.getFullName())  }
+                                Column {
+                                    Text(it.bibNumber.toString(), modifier = Modifier.align(Alignment.End))
                                 }
-                        ) {
-                            Column { state.getObserverRacers(state.selectedObserver)[index].let { Text(it.getFullName()) } }
-                            Column {
-                                Text(state.getRacer(index).bibNumber.toString(), modifier = Modifier.align(Alignment.End))
                             }
                         }
                     }
+//                    items(state.getObserverRacers(state.selectedObserver).size) { index ->
+//                        Card(
+//                            elevation = 5.dp,
+//                            modifier = Modifier.fillMaxWidth()
+//                                .padding(top = 3.dp, bottom = 3.dp, start = 10.dp, end = 10.dp)
+//                                .clickable {
+//                                    state.selectedRacer = state.getRacer(index)
+//                                }
+//                        ) {
+//                            Column { state.getObserverRacers(state.selectedObserver)[index].let { Text(it.getFullName()) } }
+//                            Column {
+//                                Text(state.getRacer(index).bibNumber.toString(), modifier = Modifier.align(Alignment.End))
+//                            }
+//                        }
+//                    }
                 }
             Column(modifier = Modifier.fillMaxWidth(.1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -63,6 +79,7 @@ private fun App(viewModel: AppViewModel) {
                                         it1,
                                         it
                                     )
+
                                 }
                             }
                         }) {
@@ -76,16 +93,30 @@ private fun App(viewModel: AppViewModel) {
                     RoundedCornerShape(10.dp)
                 )) {
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(state.observers.size) { index ->
-                            Card(
-                                elevation = 5.dp,
-                                modifier = Modifier.fillParentMaxWidth()
-                                    .padding(top = 10.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
-                                    .clickable { state.selectedObserver = state.observers[index] }
-                            ) {
-                                Column { Text(state.observers[index].name) }
-                            }
+                        state.observers.forEach { item { Card(
+                            elevation = 5.dp,
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(top = 3.dp, bottom = 3.dp, start = 10.dp, end = 10.dp)
+                                .clickable {
+                                    state.selectedObserver = state.updateObserver(it)
+                                }
+                        ) {
+                            Column { Text(it.name) }
+                        } }
                         }
+//                        items(state.observers.size) { index ->
+//                            Card(
+//                                elevation = 5.dp,
+//                                modifier = Modifier.fillParentMaxWidth()
+//                                    .padding(top = 10.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
+//                                    .clickable {
+//                                        state.selectedObserver = state.updateObserver(index)
+//                                        println("Selected Observer: ${state.selectedObserver.name}")
+//                                    }
+//                            ) {
+//                                Column { Text(state.observers[index].name) }
+//                            }
+//                        }
                     }
                 }
                 Row {
@@ -111,21 +142,34 @@ private fun App(viewModel: AppViewModel) {
                                 Column { Text("Bib", modifier = Modifier.align(Alignment.End)) }
                             }
                         }
-                            items(state.getOtherRacers(state.selectedObserver).size) { index ->
-                                Card(
-                                    elevation = 5.dp,
-                                    modifier = Modifier.fillMaxWidth()
-                                        .padding(top = 3.dp, bottom = 3.dp, start = 10.dp, end = 10.dp)
-                                        .clickable {
-                                            state.selectedRacer = state.getRacer(index)
-                                        }
-                                ) {
-                                    Column { Text(state.getRacer(index).getFullName()) }
-                                    Column {
-                                        Text(state.getOtherRacers(state.selectedObserver)[index].bibNumber.toString(), modifier = Modifier.align(Alignment.End))
+                            state.otherRacers.forEach{item {                                Card(
+                                elevation = 5.dp,
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(top = 3.dp, bottom = 3.dp, start = 10.dp, end = 10.dp)
+                                    .clickable {
+                                        state.selectedRacer = it
                                     }
+                            ) {
+                                Column { Text(it.getFullName()) }
+                                Column {
+                                    Text(it.bibNumber.toString(), modifier = Modifier.align(Alignment.End))
                                 }
-                            }
+                            }  }}
+//                            items(state.observerRacers.size) { index ->
+//                                Card(
+//                                    elevation = 5.dp,
+//                                    modifier = Modifier.fillMaxWidth()
+//                                        .padding(top = 3.dp, bottom = 3.dp, start = 10.dp, end = 10.dp)
+//                                        .clickable {
+//                                            state.selectedRacer = state.getRacer(index)
+//                                        }
+//                                ) {
+//                                    Column { Text(state.getRacer(index).getFullName()) }
+//                                    Column {
+//                                        Text(state.getOtherRacers(state.selectedObserver)[index].bibNumber.toString(), modifier = Modifier.align(Alignment.End))
+//                                    }
+//                                }
+//                            }
                         }
                 }
             }
@@ -145,12 +189,11 @@ fun main() = application {
         App(viewModel)
     }
 
+    //TODO Change this to be based on available observers from the view model
     val observer = CheatingComputer()
     AppScreenState.racers.values.forEach { it.addObserver(observer) }
-//    AppScreenState.racers[0]?.addObserver(observer)
-//    AppScreenState.racers[1]?.addObserver(observer)
-//    AppScreenState.racers[2]?.addObserver(observer)
-//    AppScreenState.racers[3]?.addObserver(observer)
+
+
     if(state.isObserverOpen) {
         Window(onCloseRequest = {state.isObserverOpen = false
             receiver.stop() }, title = observer.name) {

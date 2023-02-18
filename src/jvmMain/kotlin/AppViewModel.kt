@@ -20,7 +20,16 @@ class AppScreenState{
     }
     var isObserverOpen by mutableStateOf(false)
     var isMakeObserverOpen by mutableStateOf(false)
+    var observerRacers by mutableStateOf(listOf<Racer>())
+    var otherRacers by mutableStateOf(listOf<Racer>())
 
+    fun updateObserver(observer: RacerObserver): RacerObserver {
+        observerRacers = getObserverRacers(observer)
+        otherRacers = getOtherRacers(observer)
+
+        selectedObserver = observer
+        return observer
+    }
     fun changeObserverWindow(){
         isObserverOpen = !isObserverOpen
     }
@@ -32,15 +41,16 @@ class AppScreenState{
         return racers.values.elementAt(idx)
     }
 
+
     fun getObserverRacers(observer: RacerObserver): List<Racer> {
         val list = racers.values.filter { it.observers.contains(observer) }
-        print("hello")
+        println(list)
         return list
     }
 
     fun getOtherRacers(observer: RacerObserver): List<Racer> {
         val list = racers.values.filter { !it.observers.contains(observer) }
-        print(list)
+        println(list)
         return list
     }
 
@@ -52,14 +62,10 @@ class AppScreenState{
     var selectedObserver: RacerObserver = observer
 
     var observers: List<RacerObserver> = listOf(observer, SubscribeObserver())
-    fun updateObserver(observer: RacerObserver): RacerObserver {
-        selectedObserver = observer
-        //racers.values.forEach { it.addObserver(observer) }
-        racers[0]?.addObserver(observer)
-        return observer
-    }
+
     fun _setRacerObserver(racer: Racer, observer: RacerObserver){
         racer.addObserver(observer)
+        updateObserver(observer)
         //racer.observers.forEach { print(it.name) }
     }
 }
