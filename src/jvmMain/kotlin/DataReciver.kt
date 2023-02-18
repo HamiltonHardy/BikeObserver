@@ -27,8 +27,8 @@ class DataReceiver {
                 datagramSocket.receive(packet)
                 if (packet.length > 0) {
                     val statusMessage = decode(packet.data)
-                    val message = "Race Bib #=${statusMessage.racerBibNumber}, Sensor=${statusMessage.sensorId}, Time=${statusMessage.timestamp}"
-                    val racer: Racer? = AppScreenState.lookupRacer(statusMessage.racerBibNumber)
+                    val message = "Race Bib #=${statusMessage.RacerBibNumber}, Sensor=${statusMessage.SensorId}, Time=${statusMessage.Timestamp}"
+                    val racer: Racer? = AppScreenState.lookupRacer(statusMessage.RacerBibNumber)
                     racer?.updateStatus(statusMessage)
 //                        lookup racer
                 }

@@ -63,6 +63,10 @@ class AppScreenState{
 
     var observers: List<RacerObserver> = listOf(observer, SubscribeObserver())
 
+    fun _removeRacerObserver(racer: Racer, observer: RacerObserver){
+        racer.removeObserver(observer)
+        updateObserver(observer)
+    }
     fun _setRacerObserver(racer: Racer, observer: RacerObserver){
         racer.addObserver(observer)
         updateObserver(observer)

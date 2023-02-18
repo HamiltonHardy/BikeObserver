@@ -1,13 +1,12 @@
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 @Serializable
 data class RacerStatus(
-    var sensorId: Int,
-    var racerBibNumber: Int,
-    var timestamp: Int
+    var SensorId: Int,
+    var RacerBibNumber: Int,
+    var Timestamp: Int
 ) {
 
     companion object {

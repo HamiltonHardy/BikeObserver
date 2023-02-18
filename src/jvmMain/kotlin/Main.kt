@@ -4,11 +4,16 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.material.Icon
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +27,7 @@ import androidx.compose.ui.window.*
 private fun App(viewModel: AppViewModel) {
     val state = viewModel.state
     MaterialTheme {
-        Row() {
+        Row {
             LazyColumn(modifier = Modifier.fillMaxWidth(.475f).border(2.dp, MaterialTheme.colors.primary,
                 RoundedCornerShape(10.dp)
             ).padding(5.dp)) {
@@ -36,7 +41,7 @@ private fun App(viewModel: AppViewModel) {
                         Column { Text("Bib", modifier = Modifier.align(Alignment.End)) }
                     }
                 }
-                    state.observerRacers.forEach {
+                    state.otherRacers.forEach {
                         item {
                             Card(
                                 elevation = 5.dp,
@@ -53,29 +58,28 @@ private fun App(viewModel: AppViewModel) {
                             }
                         }
                     }
-//                    items(state.getObserverRacers(state.selectedObserver).size) { index ->
-//                        Card(
-//                            elevation = 5.dp,
-//                            modifier = Modifier.fillMaxWidth()
-//                                .padding(top = 3.dp, bottom = 3.dp, start = 10.dp, end = 10.dp)
-//                                .clickable {
-//                                    state.selectedRacer = state.getRacer(index)
-//                                }
-//                        ) {
-//                            Column { state.getObserverRacers(state.selectedObserver)[index].let { Text(it.getFullName()) } }
-//                            Column {
-//                                Text(state.getRacer(index).bibNumber.toString(), modifier = Modifier.align(Alignment.End))
-//                            }
-//                        }
-//                    }
                 }
-            Column(modifier = Modifier.fillMaxWidth(.1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Card(elevation = 5.dp, modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.fillMaxWidth(.1f).fillMaxHeight()) {
+                        Row {
+                            Button(onClick = {
+                                state.selectedObserver.let {
+                                    state.selectedRacer?.let { it1 ->
+                                        state._setRacerObserver(
+                                            it1,
+                                            it
+                                        )
+
+                                    }
+                                }
+                            }) {
+                                Icon(Icons.Filled.ArrowForward, contentDescription = "set")
+                            }
+                        }
+                    Row {
                         Button(onClick = {
                             state.selectedObserver.let {
                                 state.selectedRacer?.let { it1 ->
-                                    state._setRacerObserver(
+                                    state._removeRacerObserver(
                                         it1,
                                         it
                                     )
@@ -83,9 +87,8 @@ private fun App(viewModel: AppViewModel) {
                                 }
                             }
                         }) {
-                            Text("Set")
+                            Icon(Icons.Filled.ArrowBack, contentDescription = "remove")
                         }
-                    }
                 }
             }
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -104,19 +107,6 @@ private fun App(viewModel: AppViewModel) {
                             Column { Text(it.name) }
                         } }
                         }
-//                        items(state.observers.size) { index ->
-//                            Card(
-//                                elevation = 5.dp,
-//                                modifier = Modifier.fillParentMaxWidth()
-//                                    .padding(top = 10.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
-//                                    .clickable {
-//                                        state.selectedObserver = state.updateObserver(index)
-//                                        println("Selected Observer: ${state.selectedObserver.name}")
-//                                    }
-//                            ) {
-//                                Column { Text(state.observers[index].name) }
-//                            }
-//                        }
                     }
                 }
                 Row {
@@ -142,7 +132,7 @@ private fun App(viewModel: AppViewModel) {
                                 Column { Text("Bib", modifier = Modifier.align(Alignment.End)) }
                             }
                         }
-                            state.otherRacers.forEach{item {                                Card(
+                            state.observerRacers.forEach{item {                                Card(
                                 elevation = 5.dp,
                                 modifier = Modifier.fillMaxWidth()
                                     .padding(top = 3.dp, bottom = 3.dp, start = 10.dp, end = 10.dp)

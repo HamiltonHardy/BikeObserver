@@ -1,6 +1,3 @@
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.nio.charset.StandardCharsets
@@ -16,9 +13,9 @@ class RacerStatusTest {
         val result = RacerStatus.decode(bytes)
 
         // Assert
-        assertEquals(123, result.sensorId)
-        assertEquals(456, result.racerBibNumber)
-        assertEquals(789, result.timestamp)
+        assertEquals(123, result.SensorId)
+        assertEquals(456, result.RacerBibNumber)
+        assertEquals(789, result.Timestamp)
     }
     @Test
     fun testDecode_InvalidInput_ReturnsDefaultRacerStatus() {
@@ -30,9 +27,9 @@ class RacerStatusTest {
         val result = RacerStatus.decode(bytes)
 
         // Assert
-        assertEquals(0, result.sensorId)
-        assertEquals(0, result.racerBibNumber)
-        assertEquals(0, result.timestamp)
+        assertEquals(0, result.SensorId)
+        assertEquals(0, result.RacerBibNumber)
+        assertEquals(0, result.Timestamp)
     }
 
     @Test
@@ -45,9 +42,9 @@ class RacerStatusTest {
         val result = RacerStatus.decode(bytes)
 
         // Assert
-        assertEquals(0, result.sensorId)
-        assertEquals(0, result.racerBibNumber)
-        assertEquals(0, result.timestamp)
+        assertEquals(0, result.SensorId)
+        assertEquals(0, result.RacerBibNumber)
+        assertEquals(0, result.Timestamp)
     }
 
 }
