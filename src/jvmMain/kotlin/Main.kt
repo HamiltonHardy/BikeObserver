@@ -157,20 +157,16 @@ fun main() = application {
     val viewModel: AppViewModel by remember { mutableStateOf(AppViewModel()) }
     val state = viewModel.state
     val receiver = DataReceiver(AppScreenState.datagramSocket)
-
+    receiver.start()
     Window(onCloseRequest = ::exitApplication, title = "Main") {
         App(viewModel)
     }
 
-    //TODO Change this to be based on available observers from the view model
-//    val observer = CheatingComputer()
-//    AppScreenState.racers.values.forEach { it.addObserver(observer) }
-
 
     if(state.isObserverOpen) {
         Window(onCloseRequest = {state.isObserverOpen = false
-            receiver.stop() }, title = state.selectedObserver.name) {
-            ObserverApp(state.selectedObserver, receiver)
+             }, title = state.selectedObserver.name) {
+            ObserverApp(state.selectedObserver)
         }
     }
     if(state.isMakeObserverOpen){
@@ -208,10 +204,7 @@ Column(modifier = Modifier.selectableGroup()) {
 
 @Composable
 fun ObserverApp(
-    observer: RacerObserver,
-receiver: DataReceiver) {
-    receiver.start()
-    val observer = remember { observer }
+    observer: RacerObserver) {
 
     LazyColumn {
         item{

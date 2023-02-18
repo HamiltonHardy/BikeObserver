@@ -77,6 +77,6 @@ class SubscribeObserver : RacerObserver() {
         get() = "Subscribe Observer"
 
     override fun update(racer: Racer) {
-        println("Racer ${racer.getFullName()} has bib number ${racer.bibNumber}")
+        observedMessage += ("Racer ${racer.getFullName()} has passed sensor ${racer.lastSensorPassed} at time ${racer.lastTimestamp}")
     }
 }
