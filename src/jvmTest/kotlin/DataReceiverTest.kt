@@ -26,8 +26,8 @@ internal class DataReceiverTest {
     @OptIn(InternalCoroutinesApi::class)
     @Test
     fun `test receive packet`() {
-        synchronized(DataReceiver()) {
-            val dataReceiver = DataReceiver()
+        synchronized(DataReceiver(viewModel.state.datagramSocket)) {
+            val dataReceiver = DataReceiver(viewModel.state.datagramSocket)
             dataReceiver.start()
 
             val socket = DatagramSocket()
@@ -49,7 +49,7 @@ internal class DataReceiverTest {
 
     @Test
     fun `test receive invalid packet`() {
-        val dataReceiver = DataReceiver()
+        val dataReceiver = DataReceiver(viewModel.state.datagramSocket)
         dataReceiver.start()
 
         val socket = DatagramSocket()

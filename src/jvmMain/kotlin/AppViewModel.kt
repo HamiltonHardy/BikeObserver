@@ -2,6 +2,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import java.net.DatagramSocket
 
 //put this in Observer
 class AppViewModel {
@@ -17,6 +18,7 @@ class AppScreenState{
             return racers[bib]
 
         }
+        var datagramSocket: DatagramSocket = DatagramSocket(14000)
     }
     var isObserverOpen by mutableStateOf(false)
     var isMakeObserverOpen by mutableStateOf(false)
@@ -26,7 +28,6 @@ class AppScreenState{
     fun updateObserver(observer: RacerObserver): RacerObserver {
         observerRacers = getObserverRacers(observer)
         otherRacers = getOtherRacers(observer)
-
         selectedObserver = observer
         return observer
     }
@@ -61,8 +62,12 @@ class AppScreenState{
     var selectedRacer: Racer? = null
     var selectedObserver: RacerObserver = observer
 
-    var observers: List<RacerObserver> = listOf(observer, SubscribeObserver())
+    var observers by mutableStateOf(listOf(observer, SubscribeObserver()))
 
+    fun _addObserver(observer: RacerObserver){
+        observers = observers.plus(observer)
+        updateObserver(observer)
+    }
     fun _removeRacerObserver(racer: Racer, observer: RacerObserver){
         racer.removeObserver(observer)
         updateObserver(observer)

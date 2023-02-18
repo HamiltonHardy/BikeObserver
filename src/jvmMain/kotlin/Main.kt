@@ -2,8 +2,6 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.material.Icon
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,7 +9,6 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.*
@@ -145,21 +142,6 @@ private fun App(viewModel: AppViewModel) {
                                     Text(it.bibNumber.toString(), modifier = Modifier.align(Alignment.End))
                                 }
                             }  }}
-//                            items(state.observerRacers.size) { index ->
-//                                Card(
-//                                    elevation = 5.dp,
-//                                    modifier = Modifier.fillMaxWidth()
-//                                        .padding(top = 3.dp, bottom = 3.dp, start = 10.dp, end = 10.dp)
-//                                        .clickable {
-//                                            state.selectedRacer = state.getRacer(index)
-//                                        }
-//                                ) {
-//                                    Column { Text(state.getRacer(index).getFullName()) }
-//                                    Column {
-//                                        Text(state.getOtherRacers(state.selectedObserver)[index].bibNumber.toString(), modifier = Modifier.align(Alignment.End))
-//                                    }
-//                                }
-//                            }
                         }
                 }
             }
@@ -170,29 +152,30 @@ private fun App(viewModel: AppViewModel) {
 
 fun main() = application {
 
-    val receiver = DataReceiver()
+
 //
     val viewModel: AppViewModel by remember { mutableStateOf(AppViewModel()) }
     val state = viewModel.state
+    val receiver = DataReceiver(AppScreenState.datagramSocket)
 
     Window(onCloseRequest = ::exitApplication, title = "Main") {
         App(viewModel)
     }
 
     //TODO Change this to be based on available observers from the view model
-    val observer = CheatingComputer()
-    AppScreenState.racers.values.forEach { it.addObserver(observer) }
+//    val observer = CheatingComputer()
+//    AppScreenState.racers.values.forEach { it.addObserver(observer) }
 
 
     if(state.isObserverOpen) {
         Window(onCloseRequest = {state.isObserverOpen = false
-            receiver.stop() }, title = observer.name) {
-            ObserverApp(observer, receiver)
+            receiver.stop() }, title = state.selectedObserver.name) {
+            ObserverApp(state.selectedObserver, receiver)
         }
     }
     if(state.isMakeObserverOpen){
         Window(onCloseRequest = {state.isMakeObserverOpen = false}, title = "Make Observer"){
-            ChooseObserver()
+            ChooseObserver(viewModel)
         }
     }
 
@@ -201,11 +184,24 @@ fun main() = application {
 }
 
 @Composable
-fun ChooseObserver() {
+fun ChooseObserver(viewModel: AppViewModel) {
+    val state = viewModel.state
     var selected by remember { mutableStateOf(true)}
 Column(modifier = Modifier.selectableGroup()) {
-    RadioButton(selected = selected, onClick = { selected = true})
-    RadioButton(selected = selected, onClick = {  selected = true})
+    Row(verticalAlignment = Alignment.CenterVertically){
+        RadioButton(selected = selected, onClick = { state._addObserver(CheatingComputer())
+            selected = !selected})
+        Text("Cheating Computer")}
+    Row(verticalAlignment = Alignment.CenterVertically){
+        RadioButton(selected = !selected, onClick = {
+        selected = !selected})
+        Text("Subscribing Computer")}
+    Button(onClick = {
+        if (selected) state._addObserver(CheatingComputer())
+        else state._addObserver(SubscribeObserver())
+        state.isMakeObserverOpen = false}) {
+        Text("Add")
+    }
 }
 
 }

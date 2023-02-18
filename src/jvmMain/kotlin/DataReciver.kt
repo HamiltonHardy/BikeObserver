@@ -2,20 +2,22 @@ import java.net.DatagramPacket
 import java.net.DatagramSocket
 import RacerStatus.Companion.decode
 
-class DataReceiver {
-    private lateinit var datagramSocket: DatagramSocket
+class DataReceiver(datagramSocket: DatagramSocket) {
+
     private var keepGoing: Boolean = true
     private lateinit var runThread: Thread
-
+    private var datagramSocket: DatagramSocket = datagramSocket
     fun start() {
-        datagramSocket = DatagramSocket(14000)
         keepGoing = true
         runThread = Thread(::run)
         runThread.start()
     }
 
     fun stop() {
+        print("Stopping receiver")
         keepGoing = false
+        runThread.interrupt()
+//        datagramSocket.close()
     }
 
     private fun run() {

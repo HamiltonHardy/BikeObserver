@@ -33,7 +33,7 @@ class CheatingComputer : RacerObserver() {
             queue += racer
         }
     }
-//TODO: check if this correctly detects cheating
+//TODO: check if this correctly detects cheating, Unit test
     private fun detectCheating(racer: Racer){
         if (cheaters.contains(racer)) return
         synchronized(queue) {
