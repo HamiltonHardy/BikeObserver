@@ -6,7 +6,6 @@ import org.junit.Test
 import java.nio.charset.StandardCharsets
 
 class RacerStatusTest {
-
     @Test
     fun testDecode_ValidInput_ReturnsExpectedRacerStatus() {
         // Arrange
@@ -21,7 +20,6 @@ class RacerStatusTest {
         assertEquals(456, result.racerBibNumber)
         assertEquals(789, result.timestamp)
     }
-
     @Test
     fun testDecode_InvalidInput_ReturnsDefaultRacerStatus() {
         // Arrange
