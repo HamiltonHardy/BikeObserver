@@ -1,9 +1,7 @@
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import java.util.LinkedList
-import java.util.Queue
 
 abstract class RacerObserver {
     abstract val name:String
@@ -13,10 +11,9 @@ abstract class RacerObserver {
 }
 
 class CheatingComputer : RacerObserver() {
-//    time based fifo queue that detects if the racer is cheating
     val potentialCheaters : MutableList<Racer> = mutableListOf()
     val cheaters : MutableList<Racer> = mutableListOf()
-    var queue : LinkedList<Racer> = LinkedList()
+    private var queue : LinkedList<Racer> = LinkedList()
 
     override val name: String
         get() = "Cheating Computer"
@@ -33,7 +30,6 @@ class CheatingComputer : RacerObserver() {
             queue += racer
         }
     }
-//TODO: check if this correctly detects cheating, Unit test
     private fun detectCheating(racer: Racer){
         if (cheaters.contains(racer)) return
         synchronized(queue) {
@@ -60,14 +56,11 @@ class CheatingComputer : RacerObserver() {
                 }
             }
         }
-        println(potentialCheaters.size)
-        println(cheaters.size)
     }
     override fun update(racer: Racer) {
         observedMessage += ("Racer ${racer.getFullName()} has passed sensor ${racer.lastSensorPassed} at time ${racer.lastTimestamp}")
         updateQueue(racer)
         detectCheating(racer)
-//        print("Racer ${racer.getFullName()} has passed sensor ${racer.lastSensorPassed} at time ${racer.lastTimestamp}")
 
     }
 }

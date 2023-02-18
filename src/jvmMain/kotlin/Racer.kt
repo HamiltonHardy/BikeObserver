@@ -2,15 +2,15 @@ import java.io.BufferedReader
 import java.io.FileReader
 
 //Subject
-class Racer(firstN: String, lastN: String, bib: Int, raceG: Int,startTime: Int){
+class Racer(firstN: String, lastN: String, bib: Int, raceG: Int,val startTime: Int){
     val firstName: String = firstN
     val lastName: String = lastN
     val bibNumber: Int = bib
     val raceGroup: Int = raceG
     var lastSensorPassed: Int = 0
     var observers: MutableList<RacerObserver> = mutableListOf()
-    val startTime: Int = startTime
     var lastTimestamp: Int = 0
+
 
     fun updateStatus(racerStatus: RacerStatus) {
         lastSensorPassed = racerStatus.SensorId
@@ -23,7 +23,7 @@ class Racer(firstN: String, lastN: String, bib: Int, raceG: Int,startTime: Int){
     fun removeObserver(observer: RacerObserver) {
         observers.remove(observer)
     }
-    fun notifyObservers() {
+    private fun notifyObservers() {
         for (observer in observers) {
             observer.update(this)
         }
@@ -42,7 +42,7 @@ interface RacerFactory {
         fun createRacers(racersFileName: String,groupFileName: String): MutableMap<Int, Racer> {
             val reader0 = BufferedReader(FileReader(groupFileName))
             var line0 = reader0.readLine()
-            var raceGroupInfo = mutableMapOf<Int,List<Int>>()
+            val raceGroupInfo = mutableMapOf<Int,List<Int>>()
             while (line0 != null) {
                 val fields = line0.split(",")
                 raceGroupInfo[fields[0].toInt()] = listOf(fields[2].toInt(), fields[3].toInt(), fields[4].toInt())
@@ -56,7 +56,7 @@ interface RacerFactory {
                 val fields = line.split(",")
                 val racer = Racer(fields[0], fields[1], fields[2].toInt(), fields[3].toInt(),
                     raceGroupInfo[fields[3].toInt()]?.get(0)!!)
-                racers.put(racer.bibNumber, racer)
+                racers[racer.bibNumber] = racer
                 line = reader.readLine()
             }
             return racers
