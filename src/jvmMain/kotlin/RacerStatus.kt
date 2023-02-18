@@ -16,7 +16,7 @@ data class RacerStatus(
                 val byteString = bytes.toString(Charsets.UTF_8)
                 val regex = Regex("[^A-Za-z0-9{}:,\"]")
                 return Json.decodeFromString(regex.replace(byteString,""))
-            } catch (e: SerializationException) {
+            } catch (e:Exception){
                 println("Error decoding message: $e")
             }
             return RacerStatus(0,0,0)

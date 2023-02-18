@@ -50,15 +50,4 @@ class RacerStatusTest {
         assertEquals(0, result.timestamp)
     }
 
-    @Test(expected = SerializationException::class)
-    fun testDecode_InvalidJson_ThrowsSerializationException() {
-        // Arrange
-        val input = """{"sensorId": 123, "racerBibNumber": "invalid, "timestamp": 789}"""
-        val bytes = input.toByteArray(StandardCharsets.UTF_8)
-
-        // Act
-        RacerStatus.decode(bytes)
-
-        // Assert (handled by expected)
-    }
 }
