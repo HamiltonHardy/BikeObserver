@@ -61,7 +61,7 @@ private fun App(viewModel: AppViewModel) {
                             Button(onClick = {
                                 state.selectedObserver.let {
                                     state.selectedRacer?.let { it1 ->
-                                        state._setRacerObserver(
+                                        state.setRacerObserver(
                                             it1,
                                             it
                                         )
@@ -76,7 +76,7 @@ private fun App(viewModel: AppViewModel) {
                         Button(onClick = {
                             state.selectedObserver.let {
                                 state.selectedRacer?.let { it1 ->
-                                    state._removeRacerObserver(
+                                    state.removeRacerObserver(
                                         it1,
                                         it
                                     )
@@ -152,11 +152,9 @@ private fun App(viewModel: AppViewModel) {
 
 fun main() = application {
 
-
-//
     val viewModel: AppViewModel by remember { mutableStateOf(AppViewModel()) }
     val state = viewModel.state
-    val receiver = DataReceiver(AppScreenState.datagramSocket)
+    val receiver = DataReceiver(AppState.datagramSocket)
     receiver.start()
     Window(onCloseRequest = ::exitApplication, title = "Main") {
         App(viewModel)
@@ -166,7 +164,7 @@ fun main() = application {
     if(state.isObserverOpen) {
         Window(onCloseRequest = {state.isObserverOpen = false
              }, title = state.selectedObserver.name) {
-            ObserverApp(state.selectedObserver)
+            ObserverApp(viewModel)
         }
     }
     if(state.isMakeObserverOpen){
@@ -185,7 +183,7 @@ fun ChooseObserver(viewModel: AppViewModel) {
     var selected by remember { mutableStateOf(true)}
 Column(modifier = Modifier.selectableGroup()) {
     Row(verticalAlignment = Alignment.CenterVertically){
-        RadioButton(selected = selected, onClick = { state._addObserver(CheatingComputer())
+        RadioButton(selected = selected, onClick = { state.addObserver(CheatingComputer())
             selected = !selected})
         Text("Cheating Computer")}
     Row(verticalAlignment = Alignment.CenterVertically){
@@ -193,8 +191,8 @@ Column(modifier = Modifier.selectableGroup()) {
         selected = !selected})
         Text("Subscribing Computer")}
     Button(onClick = {
-        if (selected) state._addObserver(CheatingComputer())
-        else state._addObserver(SubscribeObserver())
+        if (selected) state.addObserver(CheatingComputer())
+        else state.addObserver(SubscribeObserver())
         state.isMakeObserverOpen = false}) {
         Text("Add")
     }
@@ -202,16 +200,18 @@ Column(modifier = Modifier.selectableGroup()) {
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ObserverApp(
-    observer: RacerObserver) {
-
+    viewModel: AppViewModel) {
+    val state = viewModel.state
     LazyColumn {
-        item{
+        stickyHeader{
             Text("Status Messages:")
         }
-            items(observer.observedMessage.size) { index ->
-                Text(observer.observedMessage[index])
+
+            items(state.selectedObserver.observedMessage.size) { index ->
+                Text(state.selectedObserver.observedMessage[index])
             }
     }
 }

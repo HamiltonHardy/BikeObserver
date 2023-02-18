@@ -1,17 +1,15 @@
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import java.net.DatagramSocket
 
-//put this in Observer
 class AppViewModel {
-    val state = AppScreenState()
+    val state = AppState()
 
 
 }
 
-class AppScreenState{
+class AppState{
     companion object{
         var racers: MutableMap<Int, Racer> = RacerFactory.createRacers("src\\jvmMain\\kotlin\\data\\Racers.csv","src\\jvmMain\\kotlin\\data\\Groups.csv")
         fun lookupRacer(bib: Int): Racer? {
@@ -24,57 +22,27 @@ class AppScreenState{
     var isMakeObserverOpen by mutableStateOf(false)
     var observerRacers by mutableStateOf(listOf<Racer>())
     var otherRacers by mutableStateOf(listOf<Racer>())
+    var selectedRacer: Racer? = null
+    var selectedObserver: RacerObserver = updateObserver(CheatingComputer())
+    var observers by mutableStateOf(listOf(selectedObserver))
 
     fun updateObserver(observer: RacerObserver): RacerObserver {
-        observerRacers = getObserverRacers(observer)
-        otherRacers = getOtherRacers(observer)
+        observerRacers = racers.values.filter { it.observers.contains(observer) }
+        otherRacers = racers.values.filter { !it.observers.contains(observer) }
         selectedObserver = observer
         return observer
     }
-    fun changeObserverWindow(){
-        isObserverOpen = !isObserverOpen
-    }
 
-    fun changeMakeObserverWindow(){
-        isMakeObserverOpen = !isMakeObserverOpen
-    }
-    fun getRacer(idx: Int): Racer {
-        return racers.values.elementAt(idx)
-    }
-
-
-    fun getObserverRacers(observer: RacerObserver): List<Racer> {
-        val list = racers.values.filter { it.observers.contains(observer) }
-        println(list)
-        return list
-    }
-
-    fun getOtherRacers(observer: RacerObserver): List<Racer> {
-        val list = racers.values.filter { !it.observers.contains(observer) }
-        println(list)
-        return list
-    }
-
-    fun getRacers(): MutableMap<Int, Racer> {
-        return racers
-    }
-    val observer: RacerObserver = updateObserver(CheatingComputer())
-    var selectedRacer: Racer? = null
-    var selectedObserver: RacerObserver = observer
-
-    var observers by mutableStateOf(listOf(observer, SubscribeObserver()))
-
-    fun _addObserver(observer: RacerObserver){
+    fun addObserver(observer: RacerObserver){
         observers = observers.plus(observer)
         updateObserver(observer)
     }
-    fun _removeRacerObserver(racer: Racer, observer: RacerObserver){
+    fun removeRacerObserver(racer: Racer, observer: RacerObserver){
         racer.removeObserver(observer)
         updateObserver(observer)
     }
-    fun _setRacerObserver(racer: Racer, observer: RacerObserver){
+    fun setRacerObserver(racer: Racer, observer: RacerObserver){
         racer.addObserver(observer)
         updateObserver(observer)
-        //racer.observers.forEach { print(it.name) }
     }
 }

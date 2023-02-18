@@ -17,7 +17,6 @@ class DataReceiver(datagramSocket: DatagramSocket) {
         print("Stopping receiver")
         keepGoing = false
         runThread.interrupt()
-//        datagramSocket.close()
     }
 
     private fun run() {
@@ -29,10 +28,8 @@ class DataReceiver(datagramSocket: DatagramSocket) {
                 datagramSocket.receive(packet)
                 if (packet.length > 0) {
                     val statusMessage = decode(packet.data)
-                    val message = "Race Bib #=${statusMessage.RacerBibNumber}, Sensor=${statusMessage.SensorId}, Time=${statusMessage.Timestamp}"
-                    val racer: Racer? = AppScreenState.lookupRacer(statusMessage.RacerBibNumber)
+                    val racer: Racer? = AppState.lookupRacer(statusMessage.RacerBibNumber)
                     racer?.updateStatus(statusMessage)
-//                        lookup racer
                 }
             } catch (err: Exception) {
                 if (err !is java.net.SocketTimeoutException) {
