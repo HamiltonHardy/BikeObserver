@@ -2,6 +2,9 @@ import java.net.DatagramPacket
 import java.net.DatagramSocket
 import RacerStatus.Companion.decode
 
+/**
+ * This class is responsible for receiving data from the UDP socket and updating the racers
+ */
 class DataReceiver(datagramSocket: DatagramSocket) {
 
     private var keepGoing: Boolean = true
@@ -29,7 +32,10 @@ class DataReceiver(datagramSocket: DatagramSocket) {
                 if (packet.length > 0) {
                     val statusMessage = decode(packet.data)
                     val racer: Racer? = statusMessage?.let { AppState.lookupRacer(it.RacerBibNumber) }
-                    racer?.updateStatus(statusMessage)
+                    val sensorMile: Int? = statusMessage?.let { AppState.sensors.getValue(it.SensorId) }
+                    if (sensorMile != null) {
+                        racer?.updateStatus(statusMessage,sensorMile)
+                    }
                 }
             } catch (err: Exception) {
                 if (err !is java.net.SocketTimeoutException) {

@@ -1,7 +1,9 @@
 import java.io.BufferedReader
 import java.io.FileReader
 
-//Subject
+/**
+ * This is the SUBJECT. It is the class that will be observed by the observers. It will be updated by the DataReceiver
+ */
 class Racer(firstN: String, lastN: String, bib: Int, raceG: Int,val startTime: Int){
     val firstName: String = firstN
     val lastName: String = lastN
@@ -10,11 +12,13 @@ class Racer(firstN: String, lastN: String, bib: Int, raceG: Int,val startTime: I
     var lastSensorPassed: Int = 0
     var observers: MutableList<RacerObserver> = mutableListOf()
     var lastTimestamp: Int = 0
+    var sensorMile: Int = 0
 
 
-    fun updateStatus(racerStatus: RacerStatus) {
+    fun updateStatus(racerStatus: RacerStatus, sensorMile: Int) {
         lastSensorPassed = racerStatus.SensorId
         lastTimestamp = racerStatus.Timestamp
+        this.sensorMile = sensorMile
         notifyObservers()
     }
     fun addObserver(observer: RacerObserver) {
@@ -39,7 +43,19 @@ class Racer(firstN: String, lastN: String, bib: Int, raceG: Int,val startTime: I
 
 interface RacerFactory {
     companion object {
-        fun createRacers(racersFileName: String,groupFileName: String,sensorFileName: String): MutableMap<Int, Racer> {
+        fun createSensors(sensorFileName: String): MutableMap<Int, Int>{
+            val map = mutableMapOf<Int, Int>()
+            val reader = BufferedReader(FileReader(sensorFileName))
+            var line = reader.readLine()
+            while (line != null) {
+                val fields = line.split(",")
+                map[fields[0].toInt()] = fields[1].toInt()
+                line = reader.readLine()
+            }
+            return map
+        }
+
+        fun createRacers(racersFileName: String,groupFileName: String): MutableMap<Int, Racer> {
             val reader0 = BufferedReader(FileReader(groupFileName))
             var line0 = reader0.readLine()
             val raceGroupInfo = mutableMapOf<Int,List<Int>>()

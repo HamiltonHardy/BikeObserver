@@ -3,6 +3,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import java.util.LinkedList
 
+/**
+ * This is the observer class that will be used to observe the racers. There is an abstact class thaat gets extended by a Cheating Computer and a Subscribing Observer
+ */
 abstract class RacerObserver {
     abstract val name:String
     var observedMessage by mutableStateOf(listOf<String>())
@@ -56,7 +59,6 @@ class CheatingComputer(name: String = "Cheating Computer") : RacerObserver() {
         }
     }
     override fun update(racer: Racer) {
-//        observedMessage += ("Racer ${racer.getFullName()} has passed sensor ${racer.lastSensorPassed} at time ${racer.lastTimestamp}")
         updateQueue(racer)
         detectCheating(racer)
 
@@ -66,8 +68,12 @@ class CheatingComputer(name: String = "Cheating Computer") : RacerObserver() {
 class SubscribeObserver(name: String = "Subscribe Observer") : RacerObserver() {
     override val name = name
 
+    private fun isFinished(racer: Racer): Boolean{
+        return racer.lastSensorPassed == AppState.sensors.size
+    }
 
     override fun update(racer: Racer) {
-        observedMessage += ("Racer ${racer.getFullName()} has passed sensor ${racer.lastSensorPassed} at time ${racer.lastTimestamp}")
+        observedMessage += ("Racer ${racer.getFullName()} has passed sensor ${racer.lastSensorPassed} at the ${racer.sensorMile} mile mark at time ${racer.lastTimestamp}")
+        if (isFinished(racer)) observedMessage += ("Racer ${racer.getFullName()} has finished the race!")
     }
 }

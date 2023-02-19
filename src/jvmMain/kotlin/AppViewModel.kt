@@ -2,7 +2,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import java.net.DatagramSocket
-
+/**
+ * This class is for managing state for the UI and defining the static read only Dictionaries for the racers and sensors
+ */
 class AppViewModel {
     val state = AppState()
 
@@ -11,7 +13,8 @@ class AppViewModel {
 
 class AppState{
     companion object{
-        var racers: MutableMap<Int, Racer> = RacerFactory.createRacers("src\\jvmMain\\kotlin\\data\\Racers.csv","src\\jvmMain\\kotlin\\data\\Groups.csv","src\\jvmMain\\kotlin\\data\\Sensors.csv")
+        val racers: MutableMap<Int, Racer> = RacerFactory.createRacers("src\\jvmMain\\kotlin\\data\\Racers.csv","src\\jvmMain\\kotlin\\data\\Groups.csv")
+        val sensors: MutableMap<Int,Int> = RacerFactory.createSensors("src\\jvmMain\\kotlin\\data\\Sensors.csv")
         fun lookupRacer(bib: Int): Racer? {
             return racers[bib]
 

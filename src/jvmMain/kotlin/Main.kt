@@ -18,6 +18,9 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 
+/**
+ * This is the main function that will be called when the program is run as well as all the UI for the program
+ */
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -226,7 +229,9 @@ fun ObserverApp(
     val state = viewModel.state
     LazyColumn {
         stickyHeader{
-            Text("Status Messages:")
+            Card(backgroundColor = MaterialTheme.colors.primary, modifier = Modifier.fillMaxWidth().padding(5.dp)) {
+                Text("Status Messages:")
+            }
         }
 
             items(state.selectedObserver.observedMessage.size) { index ->

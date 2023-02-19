@@ -20,7 +20,7 @@ class RacerTest {
         val racer = Racer("John", "Doe", 123, 1, 0)
         val racerStatus = RacerStatus(1, 123, 100)
         val observer = CheatingComputer()
-        racer.updateStatus(racerStatus)
+        racer.updateStatus(racerStatus, 100)
         racer.addObserver(observer)
         assertEquals(1, racer.lastSensorPassed)
         assertEquals(1, racer.observers.size)

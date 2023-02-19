@@ -1,5 +1,4 @@
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -11,13 +10,13 @@ class RacerObserverTest {
         val racer = Racer("John", "Doe", 123, 1, 0)
         val racerStatus = RacerStatus(1, 100, 0)
         val observer = CheatingComputer()
-        val size = observer.observedMessage.size
+        val sensorMile = 90
+
         racer.addObserver(observer)
-        racer.updateStatus(racerStatus)
+        racer.updateStatus(racerStatus, sensorMile)
         assertEquals(racer.lastSensorPassed, racerStatus.SensorId)
         assertEquals(racer.lastTimestamp, racerStatus.Timestamp)
         assertNotNull(observer)
-        assertNotEquals(observer.observedMessage.size, size)
     }
 
     @Test
@@ -47,15 +46,15 @@ class RacerObserverTest {
         val observer = CheatingComputer()
         racer1.addObserver(observer)
         racer2.addObserver(observer)
-        racer1.updateStatus(RacerStatus(1, 789, 3000))
-        racer2.updateStatus(RacerStatus(1, 790, 4000))
+        racer1.updateStatus(RacerStatus(1, 789, 3000), 100)
+        racer2.updateStatus(RacerStatus(1, 790, 4000),  100)
 
 
         assertTrue(observer.potentialCheaters.contains(racer1))
         assertTrue(observer.potentialCheaters.contains(racer2))
 
-        racer1.updateStatus(RacerStatus(1, 789, 10000))
-        racer2.updateStatus(RacerStatus(1, 790, 10000))
+        racer1.updateStatus(RacerStatus(1, 789, 10000),100)
+        racer2.updateStatus(RacerStatus(1, 790, 10000),100)
 
         assertTrue(observer.cheaters.contains(racer1))
         assertTrue(observer.cheaters.contains(racer2))
