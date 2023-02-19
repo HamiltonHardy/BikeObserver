@@ -39,7 +39,7 @@ class Racer(firstN: String, lastN: String, bib: Int, raceG: Int,val startTime: I
 
 interface RacerFactory {
     companion object {
-        fun createRacers(racersFileName: String,groupFileName: String): MutableMap<Int, Racer> {
+        fun createRacers(racersFileName: String,groupFileName: String,sensorFileName: String): MutableMap<Int, Racer> {
             val reader0 = BufferedReader(FileReader(groupFileName))
             var line0 = reader0.readLine()
             val raceGroupInfo = mutableMapOf<Int,List<Int>>()

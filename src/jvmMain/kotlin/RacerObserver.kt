@@ -66,6 +66,7 @@ class CheatingComputer(name: String = "Cheating Computer") : RacerObserver() {
 class SubscribeObserver(name: String = "Subscribe Observer") : RacerObserver() {
     override val name = name
 
+
     override fun update(racer: Racer) {
         observedMessage += ("Racer ${racer.getFullName()} has passed sensor ${racer.lastSensorPassed} at time ${racer.lastTimestamp}")
     }

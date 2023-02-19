@@ -11,7 +11,7 @@ class AppViewModel {
 
 class AppState{
     companion object{
-        var racers: MutableMap<Int, Racer> = RacerFactory.createRacers("src\\jvmMain\\kotlin\\data\\Racers.csv","src\\jvmMain\\kotlin\\data\\Groups.csv")
+        var racers: MutableMap<Int, Racer> = RacerFactory.createRacers("src\\jvmMain\\kotlin\\data\\Racers.csv","src\\jvmMain\\kotlin\\data\\Groups.csv","src\\jvmMain\\kotlin\\data\\Sensors.csv")
         fun lookupRacer(bib: Int): Racer? {
             return racers[bib]
 
