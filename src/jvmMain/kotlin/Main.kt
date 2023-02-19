@@ -35,8 +35,16 @@ private fun App(viewModel: AppViewModel) {
                         modifier = Modifier.fillMaxWidth()
                             .padding(top = 10.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
                     ) {
-                        Column { Text("Racers") }
-                        Column { Text("Bib", modifier = Modifier.align(Alignment.End)) }
+                        Column {
+                            Row {
+                                Text("Other Racers")
+                            }
+                            Divider()
+                            Row {
+                                Column(Modifier.fillMaxWidth(.5f)) { Text("Racers") }
+                                Column(Modifier.fillMaxWidth()) { Text("Bib", modifier = Modifier.align(Alignment.End)) }
+                            }
+                        }
                     }
                 }
                     state.otherRacers.forEach {
@@ -117,7 +125,6 @@ private fun App(viewModel: AppViewModel) {
                     }
                     }
                 Row{
-                    Column {  Text("Subjects of ${state.selectedObserver.name}")}
                     LazyColumn(modifier = Modifier.fillMaxWidth().border(2.dp, MaterialTheme.colors.primary,
                         RoundedCornerShape(10.dp)
                     ).padding(5.dp)) {
@@ -127,8 +134,16 @@ private fun App(viewModel: AppViewModel) {
                                 modifier = Modifier.fillMaxWidth()
                                     .padding(top = 10.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
                             ) {
-                                Column { Text("Racers") }
-                                Column { Text("Bib", modifier = Modifier.align(Alignment.End)) }
+                                Column {
+                                Row {
+                                    Text("Subjects of ${state.selectedObserver.name}")
+                                }
+                                    Divider()
+                                Row {
+                                    Column(Modifier.fillMaxWidth(.5f)) { Text("Racers") }
+                                    Column(Modifier.fillMaxWidth()) { Text("Bib", modifier = Modifier.align(Alignment.End)) }
+                                }
+                                }
                             }
                         }
                             state.observerRacers.forEach{item {                                Card(
@@ -170,7 +185,7 @@ fun main() = application {
         }
     }
     if(state.isMakeObserverOpen){
-        Window(onCloseRequest = {state.isMakeObserverOpen = false}, title = "Make Observer", state = WindowState(size = DpSize(300.dp, 200.dp))){
+        Window(onCloseRequest = {state.isMakeObserverOpen = false}, title = "Make Observer", state = WindowState(size = DpSize(300.dp, 250.dp))){
             ChooseObserver(viewModel)
         }
     }
@@ -193,7 +208,7 @@ Column(modifier = Modifier.selectableGroup()) {
         RadioButton(selected = !selected, onClick = {
         selected = !selected})
         Text("Subscribing Computer")}
-    TextField(value = name, onValueChange = {name = it})
+    TextField(value = name, onValueChange = {name = it}, placeholder = {Text("Name")})
     Button(onClick = {
         if (selected) state.addObserver(CheatingComputer(name))
         else state.addObserver(SubscribeObserver(name))
