@@ -23,7 +23,11 @@ class AppState{
     var observerRacers by mutableStateOf(listOf<Racer>())
     var otherRacers by mutableStateOf(listOf<Racer>())
     var selectedRacer: Racer? = null
-    var selectedObserver: RacerObserver = updateObserver(CheatingComputer())
+    private fun initializeStartingObserver(observer: RacerObserver): RacerObserver {
+        racers.values.forEach { it.addObserver(observer) }
+        return observer
+    }
+    var selectedObserver: RacerObserver = updateObserver(initializeStartingObserver(CheatingComputer()))
     var observers by mutableStateOf(listOf(selectedObserver))
 
     fun updateObserver(observer: RacerObserver): RacerObserver {

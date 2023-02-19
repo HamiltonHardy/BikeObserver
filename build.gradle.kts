@@ -1,4 +1,3 @@
-import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -10,6 +9,11 @@ plugins {
 group = "com.example"
 version = "1.0-SNAPSHOT"
 
+compose.desktop {
+    application {
+        mainClass = "MainKt"
+    }
+}
 repositories {
     google()
     mavenCentral()
@@ -50,3 +54,4 @@ compose.desktop {
         }
     }
 }
+

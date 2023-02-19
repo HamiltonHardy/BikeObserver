@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 
@@ -116,6 +117,7 @@ private fun App(viewModel: AppViewModel) {
                     }
                     }
                 Row{
+                    Column {  Text("Subjects of ${state.selectedObserver.name}")}
                     LazyColumn(modifier = Modifier.fillMaxWidth().border(2.dp, MaterialTheme.colors.primary,
                         RoundedCornerShape(10.dp)
                     ).padding(5.dp)) {
@@ -163,12 +165,12 @@ fun main() = application {
 
     if(state.isObserverOpen) {
         Window(onCloseRequest = {state.isObserverOpen = false
-             }, title = state.selectedObserver.name) {
+             }, title = state.selectedObserver.name, state = WindowState(size = DpSize(400.dp, 400.dp))){
             ObserverApp(viewModel)
         }
     }
     if(state.isMakeObserverOpen){
-        Window(onCloseRequest = {state.isMakeObserverOpen = false}, title = "Make Observer"){
+        Window(onCloseRequest = {state.isMakeObserverOpen = false}, title = "Make Observer", state = WindowState(size = DpSize(300.dp, 200.dp))){
             ChooseObserver(viewModel)
         }
     }
@@ -181,6 +183,7 @@ fun main() = application {
 fun ChooseObserver(viewModel: AppViewModel) {
     val state = viewModel.state
     var selected by remember { mutableStateOf(true)}
+    var name by remember { mutableStateOf("")}
 Column(modifier = Modifier.selectableGroup()) {
     Row(verticalAlignment = Alignment.CenterVertically){
         RadioButton(selected = selected, onClick = { state.addObserver(CheatingComputer())
@@ -190,9 +193,10 @@ Column(modifier = Modifier.selectableGroup()) {
         RadioButton(selected = !selected, onClick = {
         selected = !selected})
         Text("Subscribing Computer")}
+    TextField(value = name, onValueChange = {name = it})
     Button(onClick = {
-        if (selected) state.addObserver(CheatingComputer())
-        else state.addObserver(SubscribeObserver())
+        if (selected) state.addObserver(CheatingComputer(name))
+        else state.addObserver(SubscribeObserver(name))
         state.isMakeObserverOpen = false}) {
         Text("Add")
     }

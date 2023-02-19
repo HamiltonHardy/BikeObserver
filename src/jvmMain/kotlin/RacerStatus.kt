@@ -1,4 +1,5 @@
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
@@ -10,15 +11,16 @@ data class RacerStatus(
 ) {
 
     companion object {
-        fun decode(bytes: ByteArray): RacerStatus {
+        fun decode(bytes: ByteArray): RacerStatus? {
             try {
                 val byteString = bytes.toString(Charsets.UTF_8)
                 val regex = Regex("[^A-Za-z0-9{}:,\"]")
                 return Json.decodeFromString(regex.replace(byteString,""))
-            } catch (e:Exception){
+            } catch (e:SerializationException){
                 println("Error decoding message: $e")
+                return null
             }
-            return RacerStatus(0,0,0)
+
 
         }
     }

@@ -28,7 +28,7 @@ class DataReceiver(datagramSocket: DatagramSocket) {
                 datagramSocket.receive(packet)
                 if (packet.length > 0) {
                     val statusMessage = decode(packet.data)
-                    val racer: Racer? = AppState.lookupRacer(statusMessage.RacerBibNumber)
+                    val racer: Racer? = statusMessage?.let { AppState.lookupRacer(it.RacerBibNumber) }
                     racer?.updateStatus(statusMessage)
                 }
             } catch (err: Exception) {

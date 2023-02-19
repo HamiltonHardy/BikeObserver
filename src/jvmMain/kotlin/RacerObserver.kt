@@ -10,13 +10,11 @@ abstract class RacerObserver {
     abstract fun update(racer: Racer)
 }
 
-class CheatingComputer : RacerObserver() {
+class CheatingComputer(name: String = "Cheating Computer") : RacerObserver() {
     val potentialCheaters : MutableList<Racer> = mutableListOf()
     val cheaters : MutableList<Racer> = mutableListOf()
     private var queue : LinkedList<Racer> = LinkedList()
-
-    override val name: String
-        get() = "Cheating Computer"
+    override val name = name
 
     private fun updateQueue(racer: Racer){
         synchronized(queue) {
@@ -58,16 +56,15 @@ class CheatingComputer : RacerObserver() {
         }
     }
     override fun update(racer: Racer) {
-        observedMessage += ("Racer ${racer.getFullName()} has passed sensor ${racer.lastSensorPassed} at time ${racer.lastTimestamp}")
+//        observedMessage += ("Racer ${racer.getFullName()} has passed sensor ${racer.lastSensorPassed} at time ${racer.lastTimestamp}")
         updateQueue(racer)
         detectCheating(racer)
 
     }
 }
 
-class SubscribeObserver : RacerObserver() {
-    override val name: String
-        get() = "Subscribe Observer"
+class SubscribeObserver(name: String = "Subscribe Observer") : RacerObserver() {
+    override val name = name
 
     override fun update(racer: Racer) {
         observedMessage += ("Racer ${racer.getFullName()} has passed sensor ${racer.lastSensorPassed} at time ${racer.lastTimestamp}")
